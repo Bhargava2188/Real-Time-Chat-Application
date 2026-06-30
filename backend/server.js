@@ -1,34 +1,45 @@
-// const express = require('express');
-
-// const dotenv = require('dotenv');
-// dotenv.config();
-import express from 'express';
-import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
+import express from "express";
+import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import authRoutes from "./routes/authRouter.js";
 import messageRoutes from "./routes/messageRouter.js";
 import userRoutes from "./routes/userRouter.js";
 
 import connectToMongoDB from "./db/connectToMongoDB.js";
-import { app,server } from './socket/socket.js'; 
-const PORT = process.env.PORT || 5000;
+import { app, server } from "./socket/socket.js";
+
 dotenv.config();
 
-app.use(express.json()); //to parse the incoming requests with JSON payloads (from req.body)
+const PORT = process.env.PORT || 5000;
+
+// CORS (allow frontend from GitHub Pages)
+app.use(
+	cors({
+		origin: "https://bhargava2188.github.io",
+		credentials: true,
+		methods: ["GET", "POST", "PUT", "DELETE"],
+	})
+);
+
+// Middleware
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser()); //to parse the cookies from the incoming requests (from req.cookies)
+app.use(cookieParser());
 
-app.use("/api/auth",authRoutes);
-app.use("/api/messages",messageRoutes);
-app.use("/api/users", userRoutes);  
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/users", userRoutes);
 
-// app.get("/",(req,res) => {
-//     //root route for home page localhost:5000/
-//      res.send("Hello World!"); 
-// })
+// Root route (optional)
+app.get("/", (req, res) => {
+	res.send("Backend is running...");
+});
 
+// Start server
 server.listen(PORT, () => {
-    connectToMongoDB();
-    console.log(`Server is running on port ${PORT}`);
+	connectToMongoDB();
+	console.log(`Server running on port ${PORT}`);
 });
