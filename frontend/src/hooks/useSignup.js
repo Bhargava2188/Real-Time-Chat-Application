@@ -34,9 +34,7 @@ const useSignup = () => {
 					headers: {
 						"Content-Type": "application/json",
 					},
-
 					credentials: "include",
-
 					body: JSON.stringify({
 						fullName,
 						username,
@@ -53,12 +51,17 @@ const useSignup = () => {
 				throw new Error(data.error);
 			}
 
+			// save user
 			localStorage.setItem(
 				"chat-user",
 				JSON.stringify(data)
 			);
 
+			// update auth state
 			setAuthUser(data);
+
+			// redirect to home page
+			window.location.hash = "/";
 
 			toast.success("Signup successful");
 		} catch (error) {
