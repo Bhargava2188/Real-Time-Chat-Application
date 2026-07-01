@@ -8,12 +8,25 @@ const useGetConversations = () => {
 	useEffect(() => {
 		const getConversations = async () => {
 			setLoading(true);
+
 			try {
-				const res = await fetch("/api/users");
+				const res = await fetch(
+					"https://real-time-chat-application-52rd.onrender.com/api/users",
+					{
+						method: "GET",
+						credentials: "include",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
+
 				const data = await res.json();
-				if (data.error) {
+
+				if (!res.ok) {
 					throw new Error(data.error);
 				}
+
 				setConversations(data);
 			} catch (error) {
 				toast.error(error.message);
@@ -27,4 +40,5 @@ const useGetConversations = () => {
 
 	return { loading, conversations };
 };
+
 export default useGetConversations;
