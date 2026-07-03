@@ -9,12 +9,12 @@ const generateTokenAndSetCookie = (userId, res) => {
 
 	res.cookie("jwt", token, {
 		httpOnly: true,
-		secure: true,          // required for HTTPS
-		sameSite: "none",      // allow cross-site cookies
 		maxAge: 15 * 24 * 60 * 60 * 1000,
-	});
 
-	return token;
+		// IMPORTANT
+		sameSite: "none",
+		secure: true,
+	});
 };
 
 export default generateTokenAndSetCookie;
