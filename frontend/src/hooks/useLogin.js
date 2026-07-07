@@ -3,6 +3,8 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 
+const API = "https://real-time-chat-application-52rd.onrender.com";
+
 const useLogin = () => {
 	const [loading, setLoading] = useState(false);
 
@@ -13,20 +15,16 @@ const useLogin = () => {
 		setLoading(true);
 
 		try {
-			const res = await fetch(
-				"https://real-time-chat-application-52rd.onrender.com/api/auth/login",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					credentials: "include",
-					body: JSON.stringify({
-						username,
-						password,
-					}),
-				}
-			);
+			const res = await fetch(`${API}/api/auth/login`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					username,
+					password,
+				}),
+			});
 
 			const data = await res.json();
 
@@ -34,16 +32,13 @@ const useLogin = () => {
 				throw new Error(data.error);
 			}
 
-			localStorage.setItem(
-				"chat-user",
-				JSON.stringify(data)
-			);
+			localStorage.setItem("chat-user", JSON.stringify(data));
+			localStorage.setItem("token", data.token);
 
 			setAuthUser(data);
 
 			toast.success("Login successful");
 
-			// redirect after login
 			navigate("/");
 		} catch (error) {
 			toast.error(error.message);

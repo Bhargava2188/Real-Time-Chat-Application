@@ -3,10 +3,13 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 
+const API = "https://real-time-chat-application-52rd.onrender.com";
+
 const useSignup = () => {
 	const [loading, setLoading] = useState(false);
 
 	const { setAuthUser } = useAuthContext();
+
 	const navigate = useNavigate();
 
 	const signup = async ({
@@ -29,23 +32,19 @@ const useSignup = () => {
 		setLoading(true);
 
 		try {
-			const res = await fetch(
-				"https://real-time-chat-application-52rd.onrender.com/api/auth/signup",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					credentials: "include",
-					body: JSON.stringify({
-						fullName,
-						username,
-						password,
-						confirmPassword,
-						gender,
-					}),
-				}
-			);
+			const res = await fetch(`${API}/api/auth/signup`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					fullName,
+					username,
+					password,
+					confirmPassword,
+					gender,
+				}),
+			});
 
 			const data = await res.json();
 
@@ -53,16 +52,13 @@ const useSignup = () => {
 				throw new Error(data.error);
 			}
 
-			localStorage.setItem(
-				"chat-user",
-				JSON.stringify(data)
-			);
+			localStorage.setItem("chat-user", JSON.stringify(data));
+			localStorage.setItem("token", data.token);
 
 			setAuthUser(data);
 
 			toast.success("Signup successful");
 
-			// redirect
 			navigate("/");
 		} catch (error) {
 			toast.error(error.message);
